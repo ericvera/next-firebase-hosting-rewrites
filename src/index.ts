@@ -97,30 +97,30 @@ module.exports =
 
               if (!rewriteRule) {
                 errorFound = true
+                logError()
                 logError(
-                  `[REWRITE RULE ERROR] @ firebase.json/hosting/[site="${hostingEntry.site}"]`
+                  `REWRITE RULE ERROR @ firebase.json/hosting/[site="${hostingEntry.site}"]`
                 )
                 logError(`Missing rewrite rule for site path '${sitePath}'.`)
                 logError('Include the following rewrite rule in firebase.json:')
-
                 logError()
                 logError(JSON.stringify({ source, destination }))
                 logError()
               } else if (rewriteRule.destination !== destination) {
                 errorFound = true
+                logError()
                 logError(
-                  `[REWRITE RULE ERROR] @ firebase.json/hosting/[site=${hostingEntry.site}]`
+                  `REWRITE RULE ERROR @ firebase.json/hosting/[site=${hostingEntry.site}]`
                 )
                 logError(`Incorrect rewrite rule for site path '${sitePath}'.`)
                 logError('In firebase.json replace:')
-
                 logError()
                 logError(JSON.stringify(rewriteRule))
                 logError()
                 logError('with')
                 logError()
                 logError(JSON.stringify({ source, destination }))
-                console.error('')
+                logError()
               }
             }
           }

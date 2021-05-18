@@ -41,19 +41,18 @@ If you have any of the following files in your NextJS project, it will result in
 
 ```
 [...]
-info  - using build directory: /Users/user/Code/repo/hosting/.next
+info  - using build directory: /Users/user/repo/hosting/.next
 info  - Copying "static build" directory
 info  - Launching 7 workers
-> [NFHR]  Validating Firebase Hosting Rules...
-> [NFHR]  Found Firebase config at /Users/user/Code/repo/firebase.json.
-
-[ERROR] @ firebase.json [hosting/site="site-name-1"]
-Missing rewrites rule for path '/auth/action/reset-password/[oobCode]'. Include the following rewrite rule in firebase.json.
-
-{"source":"/auth/action/reset-password/*","destination":"/auth/action/reset-password/[oobCode].html"}
-
-
-Error: One or more rewrites rules missing or erroneous in '/Users/user/Code/repo/firebase.json'.
+> [FHR] Validating Firebase Hosting Rules (FHR)...
+> [FHR] Found Firebase config at /Users/user/repo/firebase.json.
+> [FHR] REWRITE RULE ERROR @ firebase.json/hosting/[site="site-name-1"]
+> [FHR] Missing rewrite rule for site path '/auth/action/reset-password/[oobCode]'.
+> [FHR] Include the following rewrite rule in firebase.json:
+> [FHR]
+> [FHR] {"source":"/auth/action/reset-password/*","destination":"/auth/action/reset-password/[oobCode].html"}
+> [FHR]
+Error: One or more rewrites rules missing or erroneous in '/Users/user/repo/firebase.json'.
 
 [...stack trace here]
 
