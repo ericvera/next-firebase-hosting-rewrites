@@ -4,7 +4,8 @@ import log from './helpers/log'
 
 const FirebaseConfigFileName = 'firebase.json'
 
-export default (sites?: string[]) =>
+module.exports =
+  (sites?: string[]) =>
   (nextConfig: NextJsConfig = {}) => {
     if (!sites || sites.length < 1) {
       throw new Error(
