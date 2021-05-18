@@ -4,126 +4,127 @@ import log from './helpers/log'
 
 const FirebaseConfigFileName = 'firebase.json'
 
-export default (sites: string[]) =>
-  (nextConfig = {}) => {
-    if (sites.length < 1) {
-      throw new Error(
-        `In order for this to work provide a list of sites to check for rewrites in the firebase.json hosting section.`
-      )
-    }
+export default (nextConfig: NextJsConfig) => {
+  const sites = nextConfig.firebaseHostingSites
 
-    return Object.assign({}, nextConfig, {
-      exportPathMap: async (
-        defaultPathMap: string[],
-        { dir }: { dir: string }
-      ) => {
-        log('Validating Firebase Hosting Rules...')
+  if (!sites || sites.length < 1) {
+    throw new Error(
+      `In order for this to work provide a list of sites to check for rewrites in the firebase.json hosting section.`
+    )
+  }
 
-        const firebaseConfigPath = await findUp(FirebaseConfigFileName, {
-          cwd: dir,
-        })
+  return Object.assign({}, nextConfig, {
+    exportPathMap: async (
+      defaultPathMap: string[],
+      { dir }: { dir: string }
+    ) => {
+      log('Validating Firebase Hosting Rules...')
 
-        if (!firebaseConfigPath) {
-          throw new Error(
-            `${FirebaseConfigFileName} not found looking through directories from ${dir} to the root.`
-          )
-        }
+      const firebaseConfigPath = await findUp(FirebaseConfigFileName, {
+        cwd: dir,
+      })
 
-        log(`Found Firebase config at ${firebaseConfigPath}.`)
-
-        const firebaseConfig = JSON.parse(
-          await fs.readFile(firebaseConfigPath, 'utf8')
-        ) as FirebaseConfig
-
-        const firebaseConfigHosting = firebaseConfig.hosting
-
-        if (!firebaseConfigHosting) {
-          throw new Error(
-            `The config ${firebaseConfigPath} does not contain a "hosting" section. Add it and run this again.`
-          )
-        }
-
-        const firebaseConfigHostingItems = firebaseConfigHosting.filter(
-          (hostingConfig) =>
-            hostingConfig.site && sites.includes(hostingConfig.site)
+      if (!firebaseConfigPath) {
+        throw new Error(
+          `${FirebaseConfigFileName} not found looking through directories from ${dir} to the root.`
         )
+      }
 
-        if (firebaseConfigHostingItems.length === 0) {
-          throw new Error(
-            `The following sites were provided as parameter (${sites.join(
-              ', '
-            )}), but no hosting entries with matching site were found.`
-          )
-        }
+      log(`Found Firebase config at ${firebaseConfigPath}.`)
 
-        if (firebaseConfigHostingItems.length !== sites.length) {
-          const foundSites = firebaseConfigHostingItems.map((item) => item.site)
+      const firebaseConfig = JSON.parse(
+        await fs.readFile(firebaseConfigPath, 'utf8')
+      ) as FirebaseConfig
 
-          throw new Error(
-            `The following sites were provided as parameter (${sites.join(
-              ', '
-            )}), but only (${foundSites.join(', ')}).`
-          )
-        }
+      const firebaseConfigHosting = firebaseConfig.hosting
 
-        let errorFound = false
+      if (!firebaseConfigHosting) {
+        throw new Error(
+          `The config ${firebaseConfigPath} does not contain a "hosting" section. Add it and run this again.`
+        )
+      }
 
-        for (const sitePath in defaultPathMap) {
-          if (sitePath.includes('[')) {
-            // Replace slugs (i.e. [...varname])
-            let source = sitePath.replace(/\[\.{3}.+?\]$/gm, '**')
+      const firebaseConfigHostingItems = firebaseConfigHosting.filter(
+        (hostingConfig) =>
+          hostingConfig.site && sites.includes(hostingConfig.site)
+      )
 
-            // Check for mistake in remaining params (param starting with .)
-            if (/\[\.+.+?\]/gm.test(source)) {
-              throw new Error(
-                `Dynamic path '${sitePath}' section should not start with . (e.g. [.name]) except for slugs at the end (i.e. [...name]). Check https://nextjs.org/docs/routing/dynamic-routes for more details.`
+      if (firebaseConfigHostingItems.length === 0) {
+        throw new Error(
+          `The following sites were provided as parameter (${sites.join(
+            ', '
+          )}), but no hosting entries with matching site were found.`
+        )
+      }
+
+      if (firebaseConfigHostingItems.length !== sites.length) {
+        const foundSites = firebaseConfigHostingItems.map((item) => item.site)
+
+        throw new Error(
+          `The following sites were provided as parameter (${sites.join(
+            ', '
+          )}), but only (${foundSites.join(', ')}).`
+        )
+      }
+
+      let errorFound = false
+
+      for (const sitePath in defaultPathMap) {
+        if (sitePath.includes('[')) {
+          // Replace slugs (i.e. [...varname])
+          let source = sitePath.replace(/\[\.{3}.+?\]$/gm, '**')
+
+          // Check for mistake in remaining params (param starting with .)
+          if (/\[\.+.+?\]/gm.test(source)) {
+            throw new Error(
+              `Dynamic path '${sitePath}' section should not start with . (e.g. [.name]) except for slugs at the end (i.e. [...name]). Check https://nextjs.org/docs/routing/dynamic-routes for more details.`
+            )
+          }
+
+          // Replace other params with glob
+          source = source.replace(/\[[^.].+?\]/gm, '*')
+
+          // Destination just add html (generated by Next.js)
+          let destination = sitePath + '.html'
+
+          let rewriteRule
+
+          for (const hostingEntry of firebaseConfigHostingItems) {
+            rewriteRule = hostingEntry.rewrites?.find(
+              (val) => val.source === source
+            )
+
+            if (!rewriteRule) {
+              errorFound = true
+              console.error(
+                `\n[ERROR] @ firebase.json [hosting/site=${hostingEntry.site}]\nMissing rewrites rule for path '${sitePath}'. Include the following rewrite rule in firebase.json.\n`
               )
-            }
-
-            // Replace other params with glob
-            source = source.replace(/\[[^.].+?\]/gm, '*')
-
-            // Destination just add html (generated by Next.js)
-            let destination = sitePath + '.html'
-
-            let rewriteRule
-
-            for (const hostingEntry of firebaseConfigHostingItems) {
-              rewriteRule = hostingEntry.rewrites?.find(
-                (val) => val.source === source
+              console.error(JSON.stringify({ source, destination }))
+              console.error('\n')
+            } else if (rewriteRule.destination !== destination) {
+              errorFound = true
+              console.error(
+                `\n[ERROR] @ firebase.json [hosting/site=${hostingEntry.site}]\nIncorrect rewrites rule for path '${sitePath}'. In firebase.json replace:\n`
               )
 
-              if (!rewriteRule) {
-                errorFound = true
-                console.error(
-                  `\n[ERROR] @ firebase.json [hosting/site=${hostingEntry.site}]\nMissing rewrites rule for path '${sitePath}'. Include the following rewrite rule in firebase.json.\n`
-                )
-                console.error(JSON.stringify({ source, destination }))
-                console.error('\n')
-              } else if (rewriteRule.destination !== destination) {
-                errorFound = true
-                console.error(
-                  `\n[ERROR] @ firebase.json [hosting/site=${hostingEntry.site}]\nIncorrect rewrites rule for path '${sitePath}'. In firebase.json replace:\n`
-                )
-
-                console.error(JSON.stringify(rewriteRule))
-                console.error('\nwith\n')
-                console.error(JSON.stringify({ source, destination }))
-                console.error('')
-              }
+              console.error(JSON.stringify(rewriteRule))
+              console.error('\nwith\n')
+              console.error(JSON.stringify({ source, destination }))
+              console.error('')
             }
           }
         }
+      }
 
-        if (errorFound) {
-          throw new Error(
-            `One or more rewrites rules missing or erroneous in '${firebaseConfigPath}'.`
-          )
-        } else {
-          log('[PASS] Firebase Hosting Rules are OK!')
-        }
+      if (errorFound) {
+        throw new Error(
+          `One or more rewrites rules missing or erroneous in '${firebaseConfigPath}'.`
+        )
+      } else {
+        log('[PASS] Firebase Hosting Rules are OK!')
+      }
 
-        return defaultPathMap
-      },
-    })
-  }
+      return defaultPathMap
+    },
+  })
+}
