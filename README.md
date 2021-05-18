@@ -20,9 +20,10 @@ On your `next.config.js`
 
 ```js
 // next.config.js
-const withFHR = require('next-firebase-hosting-rewrites')
+const withFHR = require('next-firebase-hosting-rewrites')([
+  'site-name-1',
+  'site-name-2',
+])
 
-module.exports = withFHR({
-  firebaseHostingSites: ['site-name-1', 'site-name-2']
-})
+module.exports = withFHR()
 ```

@@ -20,7 +20,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES2020",
+    "target": "ES5",
     "rootDir": "src",
     "outDir": "dist"
   },
