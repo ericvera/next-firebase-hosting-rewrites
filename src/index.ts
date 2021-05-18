@@ -18,7 +18,7 @@ module.exports =
         defaultPathMap: string[],
         { dir }: { dir: string }
       ) => {
-        log('Validating Firebase Hosting Rules...')
+        log('Validating Firebase Hosting Rules (FHR)...')
 
         const firebaseConfigPath = await findUp(FirebaseConfigFileName, {
           cwd: dir,
