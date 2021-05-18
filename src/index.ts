@@ -1,6 +1,7 @@
 import findUp from 'find-up'
 import fs from 'fs/promises'
 import log from './helpers/log'
+import logError from './helpers/logError'
 
 const FirebaseConfigFileName = 'firebase.json'
 
@@ -96,20 +97,29 @@ module.exports =
 
               if (!rewriteRule) {
                 errorFound = true
-                console.error(
-                  `\n[ERROR] @ firebase.json [hosting/site=${hostingEntry.site}]\nMissing rewrites rule for path '${sitePath}'. Include the following rewrite rule in firebase.json.\n`
+                logError(
+                  `[REWRITE RULE ERROR] @ firebase.json/hosting/[site="${hostingEntry.site}"]`
                 )
-                console.error(JSON.stringify({ source, destination }))
-                console.error('\n')
+                logError(`Missing rewrite rule for site path '${sitePath}'.`)
+                logError('Include the following rewrite rule in firebase.json:')
+
+                logError()
+                logError(JSON.stringify({ source, destination }))
+                logError()
               } else if (rewriteRule.destination !== destination) {
                 errorFound = true
-                console.error(
-                  `\n[ERROR] @ firebase.json [hosting/site=${hostingEntry.site}]\nIncorrect rewrites rule for path '${sitePath}'. In firebase.json replace:\n`
+                logError(
+                  `[REWRITE RULE ERROR] @ firebase.json/hosting/[site=${hostingEntry.site}]`
                 )
+                logError(`Incorrect rewrite rule for site path '${sitePath}'.`)
+                logError('In firebase.json replace:')
 
-                console.error(JSON.stringify(rewriteRule))
-                console.error('\nwith\n')
-                console.error(JSON.stringify({ source, destination }))
+                logError()
+                logError(JSON.stringify(rewriteRule))
+                logError()
+                logError('with')
+                logError()
+                logError(JSON.stringify({ source, destination }))
                 console.error('')
               }
             }

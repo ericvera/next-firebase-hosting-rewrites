@@ -47,7 +47,7 @@ info  - Launching 7 workers
 > [NFHR]  Validating Firebase Hosting Rules...
 > [NFHR]  Found Firebase config at /Users/user/Code/repo/firebase.json.
 
-[ERROR] @ firebase.json [hosting/site=por-el-lao-staging]
+[ERROR] @ firebase.json [hosting/site="site-name-1"]
 Missing rewrites rule for path '/auth/action/reset-password/[oobCode]'. Include the following rewrite rule in firebase.json.
 
 {"source":"/auth/action/reset-password/*","destination":"/auth/action/reset-password/[oobCode].html"}
