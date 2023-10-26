@@ -1,19 +1,24 @@
 {
   "name": "next-firebase-hosting-rewrites",
-  "version": "1.0.5",
-  "description": "Ensure that firebase.json contains the appropriate hosting rewrite rules for Next.JS dynamic routes.",
+  "version": "1.0.6",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "Ensure that firebase.json contains the appropriate hosting rewrite rules for Next.JS dynamic routes.",
+  "author": "Eric Vera",
+  "license": "MIT",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "repository": {
     "url": "https://github.com/ericvera/next-firebase-hosting-rewrites.git",
     "type": "git"
   },
-  "author": "Eric Vera",
-  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "tsc --build",
-    "update-sdks": "yarn dlx @yarnpkg/sdks"
+    "watch": "tsc --build --watch",
+    "------ NOTE ------": "Run after upgrades to yarn or typescript",
+    "up-sdks": "yarn dlx @yarnpkg/sdks"
   },
   "dependencies": {
     "find-up": "^6.3.0",
