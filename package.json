@@ -1,7 +1,8 @@
 {
   "name": "next-firebase-hosting-rewrites",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Ensure that firebase.json contains the appropriate hosting rewrite rules for Next.JS dynamic routes.",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
