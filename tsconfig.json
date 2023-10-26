@@ -9,7 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": ["es2023"],
-    "module": "node16",
+    "module": "CommonJS",
     "target": "es2022",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
