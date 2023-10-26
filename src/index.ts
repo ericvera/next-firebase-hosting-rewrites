@@ -1,4 +1,4 @@
-import { findUp } from 'find-up'
+import findUp  from 'find-up'
 import fs from 'node:fs/promises'
 import log from './helpers/log.js'
 import logError from './helpers/logError.js'
