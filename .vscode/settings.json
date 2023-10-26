@@ -3,8 +3,11 @@
     "**/.yarn": true,
     "**/.pnp.*": true
   },
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
-  "todo-tree.filtering.excludeGlobs": ["**/.pnp.js", "**/.pnp.cjs"],
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+  "todo-tree.filtering.excludeGlobs": [
+    "**/.pnp.js",
+    "**/.pnp.cjs"
+  ],
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true
 }

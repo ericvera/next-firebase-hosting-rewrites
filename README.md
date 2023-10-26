@@ -4,7 +4,7 @@ Ensure that firebase.json contains the appropriate hosting rewrites for NextJS d
 
 ## WARNINGS!
 
-This module has been tested only in the described scenario using NextJS 10.2, Yarn 2 (with PnP), Node 16.
+This module has been tested only in the described scenario using NextJS 13.5, Yarn 4 (with PnP), Node 20.
 
 Missing rewrite rules will fail your build and print out instructions on how to fix it.
 
@@ -24,7 +24,7 @@ On your `next.config.js`
 
 ```js
 // next.config.js
-const withFHR = require('next-firebase-hosting-rewrites')([
+const { withFHR } = require('next-firebase-hosting-rewrites')([
   'site-name-1',
   'site-name-2',
 ])

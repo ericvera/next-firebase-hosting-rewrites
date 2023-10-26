@@ -1,11 +1,11 @@
-import findUp from 'find-up'
-import fs from 'fs/promises'
+import {findUp} from 'find-up'
+import fs from 'node:fs/promises'
 import log from './helpers/log'
 import logError from './helpers/logError'
 
 const FirebaseConfigFileName = 'firebase.json'
 
-module.exports =
+export const withFHR =
   (sites?: string[]) =>
   (nextConfig: NextJsConfig = {}) => {
     if (!sites || sites.length < 1) {
